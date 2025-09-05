@@ -1,50 +1,29 @@
-# PyCharm/IDE 文件
-.idea/
-*.iml
-*.iws
-*.ipr
-
-# Python 缓存文件
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
 
-# 虚拟环境
+# Virtual environments
 venv/
 env/
 .venv/
 
-# 包构建和分发文件
-build/
-dist/
-*.egg-info/
+# IDE
+.idea/
+*.iml
 
-# 环境变量文件
+# Environment variables
 .env
 .venv
 
-# 日志文件
+# Logs
 *.log
 
-# 操作系统生成的文件
+# OS
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
 
-# 单元测试/覆盖率报告
-htmlcov/
-.tox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-.hypothesis/
-.pytest_cache/
+# Other files
+requirements.in

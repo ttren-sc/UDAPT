@@ -1,25 +1,10 @@
-import os
-import csv
-import time
-import random
-import warnings
-import anndata
-
-import numpy as np
-from numpy.random import choice
-import pandas as pd
-
-import scanpy as sc
-import scvelo as scv
-import seaborn as sns
-import matplotlib.pyplot as plt
-
-from tqdm import tqdm, trange
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
-
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from torch.autograd import Variable
-from torch.utils.data import Dataset, DataLoader
+anndata
+numpy
+pandas
+scanpy
+scvelo
+seaborn
+matplotlib
+tqdm
+scikit-learn
+torch
