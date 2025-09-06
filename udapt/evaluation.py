@@ -1,3 +1,23 @@
+"""
+This project is based on [TAPE](https://github.com/poseidonchan/TAPE/tree/main), which is licensed under the [GPL-3.0 License](https://github.com/poseidonchan/TAPE/blob/main/LICENSE).
+
+Original Copyright Notice (C) [2022] [Yanshuo Chen]
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License (version 3 or later) as published by the Free Software Foundation.
+
+This file includes the following functions from the utils.py of original project:
+- CCCscore()
+- L1error()
+
+Change Notes:
+- Added a calculation function for overall performance evaluation metric, Root Mean Square Error (rmse_eval)
+- Added a calculation function for overall performance evaluation metric, Pearson Correlation Coefficient (pearson)
+
+Full changes see in [UDAPT] - https://github.com/ttren-sc/UDAPT/commits/master
+Our program [UDAPT] is also available under GNU General Public License (version 3 or later) as published by the Free Software Foundation.
+
+"""
+
 import os
 import torch
 import numpy as np
@@ -68,78 +88,5 @@ def rmse_eval(y_pred, y_true):
 
     return rmse
 
-
-def output_eval(predict_df, target_df, result_path, method, run):
-    cols = target_df.columns.tolist()
-    k = len(cols)
-    print(cols)
-    cols.append("overall")
-
-    result = pd.DataFrame(np.zeros((4, k+1)), columns=cols, index=['CCC', 'MAE', 'RMSE', 'Pearson'])
-
-    for i in range(predict_df.shape[1]):
-        result.iloc[0, i] = CCCscore(target_df.iloc[:, i].values, predict_df.iloc[:, i].values)
-        result.iloc[1, i] = L1error(target_df.iloc[:, i].values, predict_df.iloc[:, i].values)
-        result.iloc[2, i] = rmse_eval(target_df.iloc[:, i].values, predict_df.iloc[:, i].values)
-        result.iloc[3, i] = pearsonr(target_df.iloc[:, i].values, predict_df.iloc[:, i].values)[0]
-
-    print(result)
-
-    ccc_score = CCCscore(predict_df.values, target_df.values)
-    result.iloc[0, -1] = ccc_score
-
-    print("Overall CCC of {} is: {}".format(method, ccc_score))
-
-    mae_score = L1error(predict_df.values, target_df.values)
-    result.iloc[1, -1] = mae_score
-
-    print("Overall MAE of {} is: {}".format(method, mae_score))
-
-    rmse = rmse_eval(predict_df.values, target_df.values)
-    result.iloc[2, -1] = rmse
-    print("Overall RMSE of {} is: {}".format(method, rmse))
-
-    pearson_corr = pearsonr(predict_df.values.flatten(order='F'), target_df.values.flatten(order='F'))[0]
-    result.iloc[3, -1] = pearson_corr
-    print("Overall Pearson of {} is: {}".format(method, pearson_corr))
-
-    print(result)
-
-    # new_result_path = result_path + '/' + name + '/' + '_' + src + '_' + tgt + '/evals'
-
-    new_result_path = result_path + '/evals'
-    if not os.path.exists(new_result_path):
-        os.makedirs(new_result_path)
-
-    result.to_csv(new_result_path + '/' + method + '_eval_' + str(run) + '.csv')
-
-
-def cal_evals(path, name, src, tgt, run, methods, target_df):
-    if tgt == None:
-        result_path_final = path + "/" + name + "_" + src
-    else:
-        result_path_final = path + "/" + name + "_"+ src + "_" + tgt
-    for item in methods:
-        prop_path = result_path_final + '/props/' + item +'_prop_' + str(run) + '.csv'
-        item_prop = pd.read_csv(prop_path)
-        output_eval(item_prop, target_df, result_path_final, item, run)
-
-if __name__=="__main__":
-    methods = ["scADDA", "Scaden", "TAPE",
-                "CIBERSORT","DeconRNASeq","EPIC","DSA",
-                "MuSiC","BisqueRNA","DWLS","deconvSeq","SCDC"]
-    # methods = ["scADDA", "Scaden", "TAPE"]
-
-    name = 'Marrow'
-    src = 'droplet'
-    tgt = 'smart'
-    run = 2
-    result_path = 'D:/Program/Pycharm/PyCharmProjects/Exp4/results'
-
-    data_path = 'D:/Program/Pycharm/PyCharmProjects/Exp4/data'
-    target_num = 500
-    store2 = pd.HDFStore(data_path + '/' + 'sim_target/' + name + '_tgt_' + str(target_num) + '.h5')
-
-    tgt_prop = store2['y_tgt']
-
-    cal_evals(result_path, name, src, tgt, run, methods, tgt_prop)
+def pearson(pred, true):
+    return pearsonr(pred.flatten(order='F'), true.flatten(order='F'))[0]

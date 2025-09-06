@@ -1,23 +1,40 @@
+"""
+This project is based on [TAPE](https://github.com/poseidonchan/TAPE/tree/main), which is licensed under the [GPL-3.0 License](https://github.com/poseidonchan/TAPE/blob/main/LICENSE).
+
+Original Copyright Notice (C) [2022] [Yanshuo Chen]
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License (version 3 or later) as published by the Free Software Foundation.
+
+This file includes the following functions from the utils.py of original project:
+- counts2FPKM()
+- FPKM2TPM()
+- counts2TPM()
+- ProcessInputData()
+And the following function from the simulation.py:
+- generate_simulated_data
+
+Change Notes:
+- Added the MyDataset class, a typically user-defined dataset class that inherits from PyTorch's torch.utils.data.Dataset base class. It is the core component of the PyTorch data pipeline and is used to load and preprocess data. (MyDataset)
+- Added the preprocessing function for tarining and test datasets suitable for our method (preprocess)
+- Added functions for dataset partitioning and data type conversion (trainTestSplit, h5adTodf)
+
+Full changes see in [UDAPT] - https://github.com/ttren-sc/UDAPT/commits/master
+Our program [UDAPT] is also available under GNU General Public License (version 3 or later) as published by the Free Software Foundation.
+"""
+
+
 import numpy as np
 import pandas as pd
 import os
-
 import torch
 import anndata
-import scanpy as sc
-
 import scanpy as sc
 import scvelo as scv
 import anndata
 import csv
-
 from tqdm import tqdm
 from numpy.random import choice
-
 from torch.utils.data import Dataset
-
-import matplotlib.pyplot as plt
-import seaborn as sns
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
 # Dataloader by pytorch
@@ -97,19 +114,6 @@ def counts2TPM(counts, genelen):
     fpkm = counts2FPKM(counts, genelen)
     tpm = FPKM2TPM(fpkm)
     return tpm
-
-def counts2TMM(counts):
-
-    # intersection
-    inter = counts.columns.intersection(genelen.index)
-    samplename = counts.index
-    counts = counts[inter].values
-    genelen = genelen.loc[inter].T.values
-    # transformation
-    totalreads = counts.sum(axis=1)
-    counts = counts * 1e9 / (genelen * totalreads.reshape(-1, 1))
-    counts = pd.DataFrame(counts, columns=inter, index=samplename)
-    return counts
 
 def ProcessInputData(train_x, test_x, sep=None, datatype='counts', variance_threshold=0.98,
                      scaler="mms",

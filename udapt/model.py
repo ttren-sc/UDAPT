@@ -1,26 +1,32 @@
+"""
+This project is based on [TAPE](https://github.com/poseidonchan/TAPE/tree/main), which is licensed under the [GPL-3.0 License](https://github.com/poseidonchan/TAPE/blob/main/LICENSE).
+
+Original Copyright Notice (C) [2022] [Yanshuo Chen]
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License (version 3 or later) as published by the Free Software Foundation.
+
+Change Notes:
+- Extended the model architecture to support further domain adaptation
+
+Full changes see in [UDAPT] - https://github.com/ttren-sc/UDAPT/commits/master
+Our program [UDAPT] is also available under GNU General Public License (version 3 or later) as published by the Free Software Foundation.
+"""
+
 import random
 import warnings
 import os
 import time
 from tqdm import tqdm, trange
-
-
 import numpy as np
 import pandas as pd
-
 from sklearn.model_selection import train_test_split
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
 from torch.utils.data import DataLoader
-
 import matplotlib.pyplot as plt
-
-from utils import MyDataset, trainTestSplit, preprocess, ProcessInputData
-
-# from evaluation import CCCscore, output_eval
+from udapt.utils import MyDataset, trainTestSplit, preprocess, ProcessInputData
 
 use_cuda = torch.cuda.is_available()
 
@@ -42,7 +48,7 @@ class AutoEncoder(nn.Module):
 
         self.encoder = nn.Sequential(
             nn.Dropout(p=0.3),
-            nn.Linear(self.inputdim, 512),
+            nn.Linear(self.inputdim, 512), # nn.Dropout(),
             nn.CELU(),
             nn.BatchNorm1d(512),
 
@@ -52,9 +58,9 @@ class AutoEncoder(nn.Module):
             nn.BatchNorm1d(256),
 
             nn.Dropout(p=0.3),
-            nn.Linear(256, 128),
+            nn.Linear(256, self.shape),
             nn.CELU(),
-            nn.BatchNorm1d(128)
+            nn.BatchNorm1d(self.shape),
         )
 
         self.predicter = nn.Sequential(
@@ -64,7 +70,6 @@ class AutoEncoder(nn.Module):
             nn.BatchNorm1d(64),
 
             nn.Linear(64, k)
-
         )
 
         self.decoder = nn.Sequential(nn.Linear(k, 64, bias=False),
@@ -97,6 +102,7 @@ class AutoEncoder(nn.Module):
         w03 = (torch.mm(w02, w3))
         w04 = (torch.mm(w03, w4))
         return F.hardtanh(w04, 0, 1)
+        # return F.relu(w04)
 
     def forward(self, x):
         sigmatrix = self.sigmatrix()
@@ -104,8 +110,11 @@ class AutoEncoder(nn.Module):
         z = self.predict(z_dis)
 
         if self.state == 'train':
+            # z = F.relu(z)
             z = F.hardtanh(z, 0, 1)
+            # pass
         elif self.state == 'test':
+            # z = F.relu(z)
             z = F.hardtanh(z, 0, 1)
             z = self.refraction(z)
 
