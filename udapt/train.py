@@ -4,28 +4,21 @@ import warnings
 import os
 import time
 from tqdm import tqdm, trange
-
-
 import numpy as np
 import pandas as pd
-
 from sklearn.model_selection import train_test_split
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
 from torch.utils.data import DataLoader
-
 import matplotlib.pyplot as plt
 
-from utils import MyDataset, trainTestSplit, preprocess, ProcessInputData
-
-from evaluation import CCCscore, output_eval
-from model import AutoEncoder, discriminator\
+from udapt.utils import MyDataset, trainTestSplit, preprocess, ProcessInputData
+from udapt.evaluation import CCCscore, output_eval
+from udapt.model import AutoEncoder, discriminator\
 
 use_cuda = torch.cuda.is_available()
-
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 warnings.filterwarnings("ignore")
 
@@ -490,7 +483,7 @@ def train_model(train, train_y, test, test_y, n, k, shape = 128, batch_size=128,
     return autoencoder_me, discriminator_me
 
 
-def predict(train_X, train_y, test_X, test_y, inter_genes, n, k, shape = 128, batch_size=128, seed=0, run=1, iters_pre =200, iters_fine=200, lr_pre = 1e-4, lr_train = 1e-4):
+def predict(train_X, train_y, test_X, inter_genes, n, k, shape = 128, batch_size=128, seed=0, run=1, iters_pre =200, iters_fine=200, lr_pre = 1e-4, lr_train = 1e-4):
     # train model
     autoencoder_me, discriminator_me = train_model(train_X, train_y, test_X, test_y, n,k, shape, batch_size=128, seed=0, run=1, iters_pre =2000, iters_fine=100, lr_pre = 1e-4, lr_train = 1e-4)
 
@@ -507,12 +500,7 @@ def predict(train_X, train_y, test_X, test_y, inter_genes, n, k, shape = 128, ba
         target_result = z.cpu().detach().numpy()
         target_sigmatrix = sigmatrix.cpu().detach().numpy()
 
-    target_result_df = pd.DataFrame(target_result)
-    target_result_df.columns = test_y.columns
+    props = pd.DataFrame(target_result)
+    signature = pd.DataFrame(target_sigmatrix)
 
-    target_sigmatrix_df = pd.DataFrame(target_sigmatrix)
-    print(target_sigmatrix_df.shape)
-    target_sigmatrix_df.columns = inter_genes
-    target_sigmatrix_df.index = test_y.columns
-
-    return target_result_df, target_sigmatrix_df
+    return props, signature
