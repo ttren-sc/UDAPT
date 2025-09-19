@@ -29,7 +29,7 @@ trainX, trainy = generate_simulated_data(sc_data, outname=None,
 trainX, testX, inter_genes = ProcessInputData(trainX, testX, sep=None, datatype='counts', variance_threshold=0.98,scaler="mms", genelenfile=None)
 
 # 2. Predict cell type proportion
-props, signature = predict(trainX, trainy, testX, inter_genes, n, k, shape = 128, batch_size=128, seed=0, run=1, iters_pre =200, iters_fine=200, lr_pre = 1e-4, lr_train = 1e-4)
+props, signature = predict(trainX, trainy, testX, inter_genes, n, k, shape = 128, batch_size=128, seed=0, run=1, iters_pre =1000, iters_fine=200, lr_pre = 1e-4, lr_train = 1e-4)
 ```
 
 ## Licence and Attribution
