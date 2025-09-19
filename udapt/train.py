@@ -308,7 +308,7 @@ def train_model(train, train_y, test, test_y, n, k, shape = 128, batch_size=128,
     return autoencoder_me, discriminator_me
 
 
-def predict(train_X, train_y, test_X, inter_genes, n, k, shape = 128, batch_size=128, seed=0, run=1, iters_pre =200, iters_fine=200, lr_pre = 1e-4, lr_train = 1e-4):
+def predict(train_X, train_y, test_X, inter_genes, n, k, shape=128, batch_size=128, seed=0, run=1, iters_pre =1000, iters_fine=200, lr_pre = 1e-4, lr_train = 1e-4):
     # train model
     test_y = [None] * len(test_X)  # 创建None占位向量
 
