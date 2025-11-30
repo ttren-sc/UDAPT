@@ -69,36 +69,57 @@ We provide two fully processed pseudo-bulk RNA-seq datasets simulated with known
   ``` 
 
 ## 4. Input/Output Format
-### 4.1 scRNA-seq Input Format (h5ad)
-
+### 4.1 Model Inputs
+#### 4.1.1 scRNA-seq Format (csv / tsv)
 Required fields:
 
-- X — raw count matrix (cells × genes)
+- Rows: Cells
 
-- obs['cell_type'] — cell type annotation
+- Columns: Genes
 
-- var_names — gene names (Ensembl or gene symbols)
-
-Example:
-```
-adata.X.shape → (74000, 20000)
-adata.obs['cell_type'].unique()
-```
-
-### 4.2 Bulk RNA-seq Input Format (csv / tsv)
-
-Required columns:
-
-- Gene column labeled "gene"
-
-- Expression columns for bulk samples
+- Elements: Gene expression values
 
 Example:
-```
-gene,Sample1,Sample2,Sample3
-CD3D, 34.2, 52.1, 48.0
-CD79A, 10.5, 13.2, 14.0
-```
+
+C\G | Gene1 | Gene2 | Gene3 | Gene4
+---|---|---|---|---
+Cell1 | 2 | 10 | 1 | 14
+Cell2 | 5 | 9 | 0 | 16
+Cell3 | 4 | 12 | 0 | 7
+
+#### 4.1.2  Cell type Annotation Format (csv / tsv)
+Required fields:
+
+- Rows: Cells
+
+- Columns: Genes
+
+- Elements: Gene expression values
+
+Example:
+
+C\CT | CellType
+---|---
+Cell1 | CT1
+Cell2 | CT3 
+Cell3 | CT2
+
+#### 4.1.3 Bulk RNA-seq Format (csv / tsv)
+Description:
+
+- Rows: Bulk RNA-seq samples
+
+- Columns: Genes
+
+- Elements: Gene expression values
+
+Example:
+
+S\G | Gene1 | Gene2 | Gene3 | Gene4
+---|---|---|---|---
+Sample1 | 120 | 560 | 30 | 240
+Sample2 | 98 | 610 | 25 | 220
+Sample3 | 135 | 590 | 41 | 260
 
 ### 4.3 Model Outputs
 
@@ -108,12 +129,12 @@ UDAPT outputs:
 
 - signature: Signature matrix
 
-Output file example:
-```
-sample, B cells, T cells, NK cells, Monocytes
-Sample1, 0.21, 0.54, 0.12, 0.13
-Sample2, 0.19, 0.56, 0.10, 0.15
-```
+Output file example of the main result props:
+
+sample | B cells | T cells | NK cells | Monocytes
+---|---|---|---|---
+Sample1 | 0.21 | 0.54 | 0.12 | 0.13
+Sample2 | 0.19 | 0.56 | 0.10 | 0.15
 
 ## 5. Quick Start: An end-to-end demo
 Using example pseudo-bulk RNA-seq data in the 3th section.
@@ -137,7 +158,7 @@ props, signature = predict(trainX, trainy, testX, inter_genes, n, k, shape = 128
 ```
 
 ## 6. Detailed Usage Guidance
-### 6.1 Pretraining
+### 6.1 Simulate pseudo-bulk RNA-seq data using scRNA-seq data
 ```
 python udapt/train_pretrain.py \
     --data data/pseudobulk/ \
