@@ -86,6 +86,7 @@ C\G | Gene1 | Gene2 | Gene3 | Gene4
 Cell1 | 2 | 10 | 1 | 14
 Cell2 | 5 | 9 | 0 | 16
 Cell3 | 4 | 12 | 0 | 7
+Cell4 | 0 | 8 | 2 | 10
 
 #### 4.1.2  Cell type Annotation Format (csv / tsv)
 Required fields:
@@ -103,6 +104,7 @@ C\CT | CellType
 Cell1 | CT1
 Cell2 | CT3 
 Cell3 | CT2
+Cell4 | CT4
 
 #### 4.1.3 Bulk RNA-seq Format (csv / tsv)
 Description:
@@ -131,7 +133,7 @@ UDAPT outputs:
 
 Output file example of the main result props:
 
-sample | B cells | T cells | NK cells | Monocytes
+sample | CT1 | CT2 | CT3 | CT4
 ---|---|---|---|---
 Sample1 | 0.21 | 0.54 | 0.12 | 0.13
 Sample2 | 0.19 | 0.56 | 0.10 | 0.15
@@ -188,33 +190,31 @@ The GPU runtime of end-to-end Marrow demo:
 
 Task | GPU Runtime
 ---|---
-Preprocess scRNA-seq	| 1–2 min
-Generate 5k pseudo-bulk samples	| 2–6 min
-Pretraining	| 3–8 min
-Domain adaptation	| 5–12 min
-Predict 500 bulk samples	| < 5 sec
-Total time | 10–20 min
+Pretraining	| 112.33 s
+Domain adaptation	| 27.11 s
+Predict 500 bulk samples	| 0.002 s
+Total time | 139.442 s
 
-## 8. Contact
-
-For inquiries or issues:
-
-📧 ttren@stu.hit.edu.cn
-
-## 9. Licence and Attribution
+## 8. Licence and Attribution
 This project is based on [TAPE-main](https://github.com/poseidonchan/TAPE), specifically using the following components:
 - Data simulation module (`simulation.py`)
 - Data preprocessing functions (`utils.py`)
 - Core neural network architecture (`model.py`)
 
-### 9.1 Original License
+### 8.1 Original License
 The original project is licensed under the [GNU General Public License v3.0](https://github.com/poseidonchan/TAPE/blob/main/LICENSE).
 
-### 9.2 Derivative Works License
+### 8.2 Derivative Works License
 This derivative work is also licensed under the GNU General Public License v3.0. For details, see the [LICENSE](https://github.com/ttren-sc/UDAPT/blob/master/LICENSE) file.
 
-### 9.3 Main change Notes
+### 8.3 Main change Notes
 We have made the following major improvements to the original code:
 1. Expanded the architecture to support further domain adaptation 
 2. Optimized the model training process
 3. Add two performance evaluation metrics: Root Mean Square Error (RMSE) and Pearson Correlation Coefficient (Pearson)
+
+## 9. Contact
+
+For inquiries or issues:
+
+📧 ttren@stu.hit.edu.cn
